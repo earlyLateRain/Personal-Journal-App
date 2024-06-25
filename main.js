@@ -1,19 +1,19 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const electronReload = require('electron-reload');
+// const electronReload = require('electron-reload');
 const path = require('path');
 const database = require('./src/database');
 
 const registeredHandlers = new Set();
 
 // Set up electron-reload
-electronReload(__dirname, {
-  electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-});
+// electronReload(__dirname, {
+//   electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+// });
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
-    height: 500,
+    height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }

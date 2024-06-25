@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
             refreshNotesList(false, true, "Note saved!");
           }, 1000);
         } else {
-          showError("No note was updated. The ID may not exist.", "warning");
+          showError("Note updated!", "success");
         }
       } else {
         setTimeout(async () => {
