@@ -1,0 +1,22 @@
+{
+  "name": "journal-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "date-fns": "^3.6.0",
+    "electron-builder": "^24.13.3",
+    "electron-reload": "^2.0.0-alpha.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "electron": "^31.0.2"
+  }
+}

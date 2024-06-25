@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Personal Journal App</title>
+</head>
+<body>
+  <h1>Personal Journal</h1>
+  <section>
+    <main>
+      <section id="menu">
+        <button id="create-note">Create Note</button>
+        <button id="view-notes">View Notes</button>
+      </section>
+      
+      <div id="note-input">
+                <section id="content-area">
+                  <form id="note-form" method="post">
+                    <textarea
+                    name="title"
+                    id="title"
+                    cols="35"
+                    rows="1"
+                    placeholder="Write a title..."></textarea>
+                    <br>
+                    <textarea
+                    name="content"
+                    id="content"
+                    cols="35"
+                    rows="10"
+                    placeholder="Write a note..."
+                    ></textarea>
+                  </form>
+                  <button id="save-note-button" type="submit">Save note</button>
+                  <div id="err-msg"></div>
+                </section>
+              </main>
+            </section>
+    </div>
+
+    <div id="notes-list"></div>
+
+
+
+    <script src="src/journal.js"></script>
+</body>
+</html>
