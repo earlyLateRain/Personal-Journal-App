@@ -5,11 +5,8 @@ const database = require('./src/database');
 
 const registeredHandlers = new Set();
 
-// Set up electron-reload
-// electronReload(__dirname, {
-//   electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-// });
 
+// Creates the browser window/
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
@@ -36,7 +33,7 @@ app.whenReady().then(() => {
     }
   }
 
-  // Now use this function to register your handlers
+  // Handler for add entry.
   safeHandle('add-entry', (event, title, content) => {
     return new Promise((resolve, reject) => {
       database.addEntry(title, content, (err, id) => {
@@ -45,7 +42,7 @@ app.whenReady().then(() => {
       });
     });
   });
-  
+   // Handler for get entries.
   safeHandle('get-entries', () => {
     return new Promise((resolve, reject) => {
       database.getEntries((err, entries) => {
@@ -54,7 +51,7 @@ app.whenReady().then(() => {
       });
     });
   });
-  
+   // Handler for get entry.
   safeHandle('get-entry', (event, id) => {
     return new Promise((resolve, reject) => {
       database.getEntry(id, (err, entry) => {
@@ -63,7 +60,7 @@ app.whenReady().then(() => {
       });
     });
   });
-  
+   // Handler for update entry.
   safeHandle('update-entry', (event, id, title, content) => {
     return new Promise((resolve, reject) => {
       database.updateEntry(id, title, content, (err, changes) => {
@@ -72,7 +69,7 @@ app.whenReady().then(() => {
       });
     });
   });
-  
+   // Handler for delete entry.
   safeHandle('delete-entry', (event, id) => {
     return new Promise((resolve, reject) => {
       database.deleteEntry(id, (err, changes) => {

@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentNoteId = null;
 
+  // Resets the note input so it's blank
   function resetNoteInputState() {
     titleInput.value = "";
     contentInput.value = "";
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     contentInput.disabled = false;
   }
 
+  // Displays the note input section and hides the saved notes.
   function displayNoteInput() {
     noteInput.style.display = "flex";
     notesList.style.display = "none";
@@ -26,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetNoteInputState();
   }
 
+  // Displays the list of saved notes and hides the note input 
   function displayNoteList() {
     noteInput.style.display = "none";
     notesList.style.display = "flex";
@@ -33,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
     createNoteBtn.style.display = "flex";
   }
 
+  // Refreshes notes so the list stays up to date and displays a success
+  // message if there is one.
   async function refreshNotesList(
     switchToListView = false,
     showMessage = false,
@@ -51,12 +56,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Switches to note input view.
   createNoteBtn.addEventListener("click", () => {
     displayNoteInput();
     resetNoteInputState();
     console.log("Note input!");
   });
-
+  // Switches to the note list view.
   viewNotesBtn.addEventListener("click", async () => {
     console.log("View notes!");
     displayNoteList();
@@ -67,30 +73,28 @@ document.addEventListener("DOMContentLoaded", () => {
       showError("Failed to fetch notes: " + error.message);
     }
   });
-
+  //Saves note to the database and shows a message.
   saveNoteBtn.addEventListener("click", async function (e) {
     // Stopping the form from being sent.
     e.preventDefault();
     console.log("Save note button clicked!");
     const title = titleInput.value;
     const content = contentInput.value;
-
+    // Throws an error if there's only white space in the note input.
     if (!title || !content) {
       showError("Title and content are required");
       return;
     }
-
+    // A try statement if the save button is being used after editing a note.
+    // Little weird thing happens here where it goes to the first else statement and throws
+    // an error, even though it updates successfully.  Will troubleshoot later.
     try {
       if (currentNoteId) {
         const changes = await window.electronAPI.updateEntry(currentNoteId, title, content)
-        
-        if (changes > 0) {
-          await refreshNotesList(false, true, "Saving...");
-          setTimeout(() => {
-            refreshNotesList(false, true, "Note saved!");
-          }, 1000);
+        if (changes) {
+          await refreshNotesList(false, true, "Saved!")
         } else {
-          showError("Note updated!", "success");
+          showError("Note saved!", "Saving");
         }
       } else {
         setTimeout(async () => {
@@ -100,23 +104,22 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           refreshNotesList(false, true, "Note saved!");
         }, 1050);
-        // console.log('Success!')
+
       }
 
       titleInput.value = "";
       contentInput.value = "";
       currentNoteId = null;
 
-      // Submiting the form down here/
     } catch (error) {
       showError("Failed to save note: " + error.message);
     }
   });
-
+  // Adds event listeners to each of the edit and delete buttons created in the notes list.
   function addNoteButtonListeners() {
     const editButtons = document.querySelectorAll(".edit-note-btn");
     const deleteButtons = document.querySelectorAll(".delete-note-btn");
-
+    // Targets the edit button that was clicked and gets the entry by id.
     editButtons.forEach((button) => {
       button.addEventListener("click", async (event) => {
         const noteId = event.target.getAttribute("data-id");
@@ -126,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
             displayNoteInput();
             titleInput.value = note.title;
             contentInput.value = note.content;
-            currentNoteId = note.id; // Changed from currentNoteId.value
+            currentNoteId = note.id;
           } else {
             showError("Note not found");
           }
@@ -135,7 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
-
+    // Targets the delete button that was clicked and deletes the entry from the database.
+    // by id.
     deleteButtons.forEach((button) => {
       button.addEventListener("click", async (event) => {
         const noteId = event.target.getAttribute("data-id");
@@ -150,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-
+  // Creates a display for the notes list.
   function displayNotes(notes) {
     const myNotes = notes
       .map(
@@ -171,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     notesList.innerHTML = `${myNotes}`;
     addNoteButtonListeners();
   }
-
+  //Handles showing error and success messages.
   function showError(message, type = "error") {
     errMsg.textContent = message;
     errMsg.className = type;
@@ -190,6 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 2000); // Display error message for 2 seconds
     }
   }
-
+  // Refreshes the notes list on load.
   refreshNotesList(false);
 });

@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+// Preloads the different ipc renderers.
 contextBridge.exposeInMainWorld('electronAPI', {
     addEntry: (title, content) => ipcRenderer.invoke('add-entry', title, content),
     getEntries: () => ipcRenderer.invoke('get-entries'),
