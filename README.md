@@ -7,5 +7,3 @@ It has four functions:
 3. Editing notes
 4. Deleting notes
 
-Everything is saved to a databases and queried from there.
-------
