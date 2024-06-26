@@ -1,7 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 // const electronReload = require('electron-reload');
 const path = require('path');
-const database = require('./src/database');
+const Database = require('./src/database.js').default;
+const database = new Database();
 
 const registeredHandlers = new Set();
 
