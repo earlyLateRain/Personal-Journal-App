@@ -3,29 +3,25 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const Database = require('./src/database.js').default;
 const database = new Database();
-
 const registeredHandlers = new Set();
-
-
 // Creates the browser window/
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 500,
+    height: 650,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   });
   win.loadFile('index.html');
 }
-
 app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-
   // Register your handlers here
   function safeHandle(channel, handler) {
     if (!registeredHandlers.has(channel)) {
@@ -33,7 +29,6 @@ app.whenReady().then(() => {
       registeredHandlers.add(channel);
     }
   }
-
   // Handler for add entry.
   safeHandle('add-entry', (event, title, content) => {
     return new Promise((resolve, reject) => {
@@ -44,7 +39,7 @@ app.whenReady().then(() => {
     });
   });
    // Handler for get entries.
-  safeHandle('get-entries', () => {
+  safeHandle('get-entries', () => {``
     return new Promise((resolve, reject) => {
       database.getEntries((err, entries) => {
         if (err) reject(err);
@@ -80,11 +75,9 @@ app.whenReady().then(() => {
     });
   });
 });
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
-
 app.on('before-quit', () => {
   registeredHandlers.forEach(channel => {
     ipcMain.removeHandler(channel);

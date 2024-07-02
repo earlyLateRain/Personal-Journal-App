@@ -6,10 +6,44 @@ document.addEventListener("DOMContentLoaded", () => {
   const contentInput = document.getElementById("content");
   const noteInput = document.getElementById("note-input");
   const notesList = document.getElementById("notes-list");
-  const errMsg = document.getElementById("err-msg");
+  const h1 = document.querySelector('h1');
+
+// Get the theme toggle inputs
+const lightThemeToggle = document.getElementById('color-scheme-light');
+const darkThemeToggle = document.getElementById('color-scheme-dark');
+
+// Function to set the theme based on the selected option
+function setTheme(theme) {
+  document.body.classList.remove('light-theme', 'dark-theme');
+
+  if (theme === 'light') {
+    document.body.classList.add('light-theme');
+  } else if (theme === 'dark') {
+    document.body.classList.add('dark-theme');
+  }
+}
+
+// Function to handle the theme change event
+function handleThemeChange(event) {
+  const selectedTheme = event.target.value;
+  setTheme(selectedTheme);
+  localStorage.setItem('selectedTheme', selectedTheme);
+}
+
+// Add event listeners to the theme toggle inputs
+lightThemeToggle.addEventListener('change', handleThemeChange);
+darkThemeToggle.addEventListener('change', handleThemeChange);
+
+// Get the saved theme from local storage
+const savedTheme = localStorage.getItem('selectedTheme');
+
+// Set the initial theme based on the saved theme or the system preference
+if (savedTheme) {
+  setTheme(savedTheme);
+  document.getElementById(`color-scheme-${savedTheme}`).checked = true;
+}
 
   let currentNoteId = null;
-
   // Resets the note input so it's blank
   function resetNoteInputState() {
     titleInput.value = "";
@@ -40,49 +74,37 @@ document.addEventListener("DOMContentLoaded", () => {
   // message if there is one.
   async function refreshNotesList(
     switchToListView = false,
-    showMessage = false,
-    message = ""
   ) {
     const notes = await window.electronAPI.getEntries();
-
     if (switchToListView) {
       displayNoteList();
     }
-
     displayNotes(notes);
-
-    if (showMessage) {
-      showError(message, "success");
-    }
   }
 
   // Switches to note input view.
   createNoteBtn.addEventListener("click", () => {
     displayNoteInput();
     resetNoteInputState();
-    console.log("Note input!");
   });
   // Switches to the note list view.
   viewNotesBtn.addEventListener("click", async () => {
-    console.log("View notes!");
     displayNoteList();
     try {
       await refreshNotesList(true);
-      console.log("Refreshed note list!");
     } catch (error) {
-      showError("Failed to fetch notes: " + error.message);
+      showNotification(`Failed to fetch notes: error.message`, 'error');
     }
   });
   //Saves note to the database and shows a message.
   saveNoteBtn.addEventListener("click", async function (e) {
     // Stopping the form from being sent.
     e.preventDefault();
-    console.log("Save note button clicked!");
     const title = titleInput.value;
     const content = contentInput.value;
     // Throws an error if there's only white space in the note input.
     if (!title || !content) {
-      showError("Title and content are required");
+      showNotification("Title and content are required", 'error');
       return;
     }
     // A try statement if the save button is being used after editing a note.
@@ -92,17 +114,23 @@ document.addEventListener("DOMContentLoaded", () => {
       if (currentNoteId) {
         const changes = await window.electronAPI.updateEntry(currentNoteId, title, content)
         if (changes) {
-          await refreshNotesList(false, true, "Saved!")
+          await refreshNotesList(false)
+          showNotification('Saving...', 'success', 2000)
+          setTimeout(() => {
+            showNotification('Saved', 'success', 1000)
+          }, 1000)
         } else {
-          showError("Note saved!", "Saving");
+          showNotification("Failed to edit note.", error);
         }
       } else {
         setTimeout(async () => {
           await window.electronAPI.addEntry(title, content);
         }, 1800);
-        await refreshNotesList(false, true, "Saving...");
+        await refreshNotesList(false);
+        showNotification('Saving...', 'success')
         setTimeout(() => {
-          refreshNotesList(false, true, "Note saved!");
+          refreshNotesList(false);
+          showNotification("Note saved!", 'success')
         }, 1050);
 
       }
@@ -112,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currentNoteId = null;
 
     } catch (error) {
-      showError("Failed to save note: " + error.message);
+      showNotification(`Failed to save note: error.message`, 'error');
     }
   });
   // Adds event listeners to each of the edit and delete buttons created in the notes list.
@@ -131,10 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
             contentInput.value = note.content;
             currentNoteId = note.id;
           } else {
-            showError("Note not found");
+            showNotification("Note not found", error);
           }
         } catch (error) {
-          showError("Failed to fetch note: " + error.message);
+          showNotification(`Failed to fetch note: error.message`, 'error');
         }
       });
     });
@@ -146,10 +174,10 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           await window.electronAPI.deleteEntry(parseInt(noteId));
           await refreshNotesList(true);
-          showError("Note deleted successfully", "success");
+          showNotification("Note deleted successfully", "success");
           //   resetNoteInputState();
         } catch (error) {
-          showError("Failed to delete note: " + error.message);
+          showNotification(`Failed to delete note: error.message`, 'error');
         }
       });
     });
@@ -176,23 +204,14 @@ document.addEventListener("DOMContentLoaded", () => {
     addNoteButtonListeners();
   }
   //Handles showing error and success messages.
-  function showError(message, type = "error") {
-    errMsg.textContent = message;
-    errMsg.className = type;
+  function showNotification(message, type, duration = 3000) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
 
-    if (type === "success") {
-      clearTimeout(errMsg.timeoutId);
-      errMsg.timeoutId = setTimeout(() => {
-        errMsg.textContent = "";
-        errMsg.className = "";
-      }, 1050); // Display success message for 1 second
-    } else {
-      clearTimeout(errMsg.timeoutId);
-      errMsg.timeoutId = setTimeout(() => {
-        errMsg.textContent = "";
-        errMsg.className = "";
-      }, 2000); // Display error message for 2 seconds
-    }
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, duration);
   }
   // Refreshes the notes list on load.
   refreshNotesList(false);

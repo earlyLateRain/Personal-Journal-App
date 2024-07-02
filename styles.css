@@ -1,97 +1,238 @@
+/* Global styles */
 
+    /* Width of the scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  /* Track */
+  .dark-theme::-webkit-scrollbar-track {
+    background: #242528;
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+  .dark-theme::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+  }
+  /* Handle on hover */
+  .dark-theme::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 
+  :not(.dark-theme)::-webkit-scrollbar-track {
+    background: #fff;
+    border-radius: 10px;
+  }
+
+  :not(.dark-theme)::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+
+  :not(.dark-theme)::-webkit-scrollbar-thumb:hover {
+    background: #afafaf;
+    border-radius: 10px;
+  }
+  
 
 body {
-    background-color: black;
     display: flex;
+    justify-content: center;
     flex-direction: column;
-}
+    align-items: center;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Light theme (default) */
+  body {
+    background-color: #fff;
+    color: #222;
+  }
+  
+  /* Dark theme */
+  body.dark-theme {
+    background-color: #242528;
+    color: hsl(228, 5%, 80%);
+  }
+  
+  /* Dark theme - textarea and button styles */
+  body.dark-theme textarea,
+  body.dark-theme button {
+    background-color: #333;
+  }
+  
+  body.dark-theme button:active {
+    background-color: #575757;
+  }
+  
+  body.dark-theme .toggle-group label:has(input:checked) {
+    background-color: #333;
+  }
+  
+  /* Light theme - button active and toggle group styles */
+  body:not(.dark-theme) button:active,
+  body:not(.dark-theme) .toggle-group label:has(input:checked) {
+    background-color: #ccc;
+  }
+  
 
-h1 {
-    color: aliceblue;
+/* Toggle group styles */
+.toggle-group {
+    border: 1px solid #333;
+    border-radius: 10px;
+    inline-size: fit-content;
+    padding: 3px;
+    margin: 0.5em;
+  }
+  
+  .toggle-group label {
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    padding: 0.5em 1em;
     text-align: center;
-}
+    user-select: none;
+  }
+  
+  .toggle-group input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    margin: 0;
+  }
+  
+  .toggle-group input[type="radio"]:checked + span {
+    font-weight: bold;
+  }
 
-h2 {
-    color: aliceblue;
-}
-
-h3 {
-    color: aliceblue;
-}
-
-p {
-    color: aliceblue;
-}
-
-small {
-     color: aliceblue;
-}
-
-main {
+  /* Main content styles */
+  main {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
-};
-
-section #menu {
+  }
+  
+  section #menu {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-
-section #content-area {
+  }
+  
+  section #content-area {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 1rem;
-
-}
-
-div #err-msg {
-    display: flex;
-    margin: 0.5rem;
-    display: flex;
-    justify-content: center;
-}
-#err-msg {
-    line-height: 1.5rem;
-    display: none;
-    z-index: 1000;
+  }
+  
+  /* Error message styles */
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
     border-radius: 5px;
-    background-color: aliceblue;
-    color: black;
-    /* padding: 1rem; */
-}
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
 
-#err-msg.success {
-    background-color: aliceblue;
-    color: black;
-}
+  .notification.show {
+    opacity: 1;
+  }
 
-#err-msg.warning {
-    background-color: aliceblue;
-    color: black;
-}
+  .notification.success {
+    background-color: #4CAF50;
+    color: white;
+  }
 
-#notes-list {
+  .notification.error {
+    background-color: #F44336;
+    color: white;
+  }
+  
+  /* Notes list styles */
+  #notes-list {
     display: none;
     flex-direction: column;
     justify-content: left;
     word-wrap: break-word;
-}
-
-#create-note {
+    font-size: 1rem;
+    margin: 0 0 0 0.75em;
+  }
+  
+  #create-note {
     display: none;
-}
+  }
+  
+  /* Button styles */
+  button {
+    background-color: inherit;
+    color: inherit;
+    border: 1px solid #222;
+    border-radius: 8px;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    padding: 9px 19px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    touch-action: manipulation;
+    transition: box-shadow 0.2s, transform 0.1s;
+    user-select: none;
+    width: auto;
+  }
+  
+  button:focus-visible {
+    box-shadow: #222 0 0 0 2px, rgba(255, 255, 255, 0.8) 0 0 0 4px;
+  }
+  
+  button:active {
+    border-color: #000;
+    transform: scale(0.96);
+  }
+  
+  button:disabled {
+    border-color: #ddd;
+    color: #ddd;
+    cursor: not-allowed;
+    opacity: 1;
+  }
+  
+  /* Textarea styles */
+  textarea {
+    resize: none;
+    background-color: inherit;
+    color: inherit;
+    border: 1px solid #222;
+    border-radius: 8px;
+    box-sizing: border-box;
+    cursor: text;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    padding: 13px 23px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    touch-action: manipulation;
+    transition: box-shadow 0.2s, transform 0.1s;
+    user-select: none;
+    width: auto;
+  }
 
-button {
-    background-color: aliceblue;
-}
-
-textarea {
-    background-color: aliceblue;
-}
