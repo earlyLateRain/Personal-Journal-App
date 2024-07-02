@@ -162,7 +162,8 @@ body {
     justify-content: left;
     word-wrap: break-word;
     font-size: 1rem;
-    margin: 0 0 0 0.75em;
+    width: 100%;
+    margin: 0 0.75em 0 1em;
   }
   
   #create-note {
